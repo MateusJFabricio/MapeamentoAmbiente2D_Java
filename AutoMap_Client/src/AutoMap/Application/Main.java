@@ -1,7 +1,8 @@
 package AutoMap.Application;
 
 import java.awt.EventQueue;
-import Views.viewMain;
+
+import AutoMap.Views.viewMain;
 
 public class Main {
 

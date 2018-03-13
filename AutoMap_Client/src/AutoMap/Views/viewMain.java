@@ -1,4 +1,4 @@
-package Views;
+package AutoMap.Views;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
