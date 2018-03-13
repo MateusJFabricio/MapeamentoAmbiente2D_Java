@@ -149,6 +149,21 @@ public class viewMain extends JFrame {
 		Canvas canvas = new Canvas();
 		panel_2.add(canvas, BorderLayout.CENTER);
 		
+		JMenuBar menuBar_1 = new JMenuBar();
+		getContentPane().add(menuBar_1, BorderLayout.NORTH);
+		
+		JButton btnCtrlManual = new JButton("Ctrl Manual");
+		btnCtrlManual.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				viewControle controle = new viewControle();
+				controle.show();
+			}
+		});
+		menuBar_1.add(btnCtrlManual);
+		
+		JButton btnNewButton_1 = new JButton("New button");
+		menuBar_1.add(btnNewButton_1);
+		
 
 	}
 }
