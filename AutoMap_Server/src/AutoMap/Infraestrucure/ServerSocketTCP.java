@@ -23,39 +23,53 @@ public class ServerSocketTCP {
 
 
 	public ServerSocketTCP(int porta){
+		abrirConexao(porta);
+	}
+	
+	private void abrirConexao(int porta) {
 		try {
-		      	// Instancia o ServerSocket ouvindo a porta
-		      	servidor = new ServerSocket(porta);
-				// o método accept() bloqueia a execução até que
-				// o servidor receba um pedido de conexão
-		      	servidor.setSoTimeout(1000);
-				cliente = servidor.accept();
-				hostConectado =  cliente.getInetAddress().getHostAddress();
-				
-				entrada = new ObjectInputStream(cliente.getInputStream());
-				saida = new ObjectOutputStream(cliente.getOutputStream());
-				saida.flush();
-		    }   
-		    catch(Exception e) {
-		       System.out.println("Erro: " + e.getMessage());
-		    }
-	     
+	      	// Instancia o ServerSocket ouvindo a porta
+	      	servidor = new ServerSocket(porta);
+	      	
+			// o método accept() bloqueia a execução até que
+			// o servidor receba um pedido de conexão
+			cliente = servidor.accept();
+			
+			hostConectado =  cliente.getInetAddress().getHostAddress();
+			
+			//Instacia os objetos de entrada e saída
+			entrada = new ObjectInputStream(cliente.getInputStream());
+			saida = new ObjectOutputStream(cliente.getOutputStream());
+			
+	    }   
+	    catch(Exception e) {
+	       System.out.println("Erro ao abrir conexao Socket: " + e.getMessage());
+	    }
+
 	}
 	
-	public void EnviarInformacoes(InformacoesSockets info) throws IOException{
-		saida.flush();
-		saida.writeObject(info);
-	}
-	
-	public InformacoesSockets RetornarInformacoes() throws ClassNotFoundException, IOException {
-		return (InformacoesSockets) entrada.readObject();
-	}
-	
-	public void FecharConexaoSocket() throws IOException{
+	public void fecharConexaoSocket() throws IOException{
 		saida.close();
 		entrada.close();
 		cliente.close();  
 	}
+	
+	
+	public void enviarInformacoes(InformacoesSockets info) 
+	{
+		try {
+			saida.flush();
+			saida.writeObject(info);
+		} catch (IOException e) {
+			System.out.println("Erro ao enviar informações Socket: " + e.getMessage());
+		}
+	}
+	
+	public InformacoesSockets retornarInformacoes() throws ClassNotFoundException, IOException 
+	{
+			return (InformacoesSockets) entrada.readObject();		
+	}
+	
 	
 	public boolean isConectado() {
 		return cliente.isConnected();
