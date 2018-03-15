@@ -2,33 +2,33 @@ package AutoMap.Infraestrucure;
 
 public class PinoRPi {
 	private int numPino;
-	private int TipoPino;
+	
+	private Pino tipoPino;
+	
+	enum Pino{
+		Entrada, 
+		Saida,
+		SerialRead,
+		SerialWrite,
+		AnalogicoRead,
+		AnalogicoWrite 
+	}
+	
 	private int valorPino;
 	
-	public int getNumPino() {
-		return numPino;
-	}
-	public void setNumPino(int numPino) {
-		this.numPino = numPino;
-	}
-	public int getTipoPino() {
-		return TipoPino;
-	}
-	public void setTipoPino(int tipoPino) {
-		TipoPino = tipoPino;
-	}
 	public int getValorPino() {
-		return valorPino;
+			return valorPino;
 	}
 	
 	public void setValorPino(int valorPino) {
 		//Se for do tipo saida
-		if (TipoPino == 1) {
-			if (!(valorPino > 1)){
+		if (tipoPino == Pino.Saida) {
+			if ((valorPino == 0) || (valorPino == 1)){
 				this.valorPino = valorPino;
 			}
-		}else if (TipoPino == 2) {
-			this.valorPino = valorPino;
+		}else if (tipoPino == Pino.AnalogicoWrite) {
+			if ((valorPino >= -3000) || (valorPino >= -3000))
+				this.valorPino = valorPino;
 		}
 		
 	}

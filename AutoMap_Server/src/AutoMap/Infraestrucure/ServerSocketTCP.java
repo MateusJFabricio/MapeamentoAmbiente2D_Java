@@ -4,12 +4,20 @@ import java.awt.Transparency;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.KeyStore.TrustedCertificateEntry;
 import java.sql.Date;
+import java.util.Enumeration;
 
 import javax.sql.rowset.spi.TransactionalWriter;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import com.pi4j.system.NetworkInterface;
 
 
 public class ServerSocketTCP {
@@ -23,10 +31,14 @@ public class ServerSocketTCP {
 
 
 	public ServerSocketTCP(int porta){
-		abrirConexao(porta);
+		try {
+			abrirConexao(porta);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao abrir conexao Socket: " + e.getMessage());
+		}
 	}
 	
-	private void abrirConexao(int porta) {
+	private void abrirConexao(int porta) throws IOException {
 		try {
 	      	// Instancia o ServerSocket ouvindo a porta
 	      	servidor = new ServerSocket(porta);
@@ -43,7 +55,7 @@ public class ServerSocketTCP {
 			
 	    }   
 	    catch(Exception e) {
-	       System.out.println("Erro ao abrir conexao Socket: " + e.getMessage());
+	    	JOptionPane.showMessageDialog(null, "Erro ao abrir conexao Socket: " + e.getMessage());
 	    }
 
 	}
@@ -74,5 +86,6 @@ public class ServerSocketTCP {
 	public boolean isConectado() {
 		return cliente.isConnected();
 	}
+	
 	
 }
