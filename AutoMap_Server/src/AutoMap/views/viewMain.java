@@ -1,5 +1,11 @@
 package AutoMap.views;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.EventQueue;
@@ -17,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
@@ -25,6 +32,8 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -36,12 +45,30 @@ public class viewMain extends JFrame {
 	private JTextField textField;
 	private JTable table;
 	ServerSocketTCP conexao;
-
-	
+	private JTextField textField_1;
+	private static final ExecutorService threadpool = Executors.newSingleThreadExecutor();
+	private Socket cliente;
 
 	/**
 	 * Create the frame.
 	 */
+	// classe que implementa a interface Callable e retorna um numero aleatorio
+    class NovaConexao implements Callable<Socket> {
+
+          public Socket call() {
+
+      			try {
+      				conexao = new ServerSocketTCP();
+      				cliente = conexao.abrirConexao(12345);
+      				
+      			} catch (Exception e) {
+      				JOptionPane.showMessageDialog(null, "Conexão mal sucedida: " + e.getMessage());
+      			}
+				return cliente;
+          }
+          
+    }
+    
 	public viewMain() {
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -53,129 +80,97 @@ public class viewMain extends JFrame {
 					e1.printStackTrace();
 				}
 			}
-		});		
+		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 393, 361);
-		
+		setBounds(100, 100, 388, 361);
+
 		JLabel lblLblipatual = new JLabel("lblIpAtual");
+		lblLblipatual.setBounds(116, 38, 74, 14);
 		try {
 			lblLblipatual.setText(InetAddress.getLocalHost().getHostAddress());
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-		
-		JMenu mnFuncionalidades = new JMenu("Funcionalidades");
-		menuBar.add(mnFuncionalidades);
-		
-		JMenuItem mntmVisualizarLog = new JMenuItem("Visualizar Log");
-		mnFuncionalidades.add(mntmVisualizarLog);
-		
-		JMenuItem mntmAbrirSqliteStudio = new JMenuItem("Abrir SQLite Studio");
-		mnFuncionalidades.add(mntmAbrirSqliteStudio);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
+
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
-		
-		JButton button = new JButton("Iniciar Socket");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					conexao = new ServerSocketTCP(12345);
-					Button.
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Falha ao iniciar socket: " + e.getMessage());
-				}
-				
-			}
-		});
-		
+
+		final JButton button = new JButton("Iniciar Socket");
+		button.setBounds(194, 38, 147, 70);
+
 		JLabel lblIpAtual = new JLabel("Ip Atual:");
-		
+		lblIpAtual.setBounds(46, 38, 64, 14);
+
 		JLabel lblPorta = new JLabel("Porta:");
-		
+		lblPorta.setBounds(58, 63, 52, 14);
+
 		textField = new JTextField();
+		textField.setText("1234");
+		textField.setBounds(120, 60, 64, 20);
 		textField.setColumns(10);
-		
+
 		table = new JTable();
-		
+		table.setBounds(10, 147, 342, 105);
+
 		JLabel lblConexesAtuais = new JLabel("Conex\u00F5es atuais");
-		
+		lblConexesAtuais.setBounds(10, 127, 80, 14);
+
 		JButton btnEncerrarConexo = new JButton("Encerrar Conex\u00E3o");
+		btnEncerrarConexo.setBounds(10, 270, 155, 23);
+
+		JLabel lblInformaes = new JLabel("Informa\u00E7\u00F5es");
+		lblInformaes.setBounds(24, 11, 105, 14);
+		panel.setLayout(null);
+		panel.add(btnEncerrarConexo);
+		panel.add(table);
+		panel.add(lblInformaes);
+		panel.add(lblIpAtual);
+		panel.add(lblPorta);
+		panel.add(textField);
+		panel.add(lblLblipatual);
+		panel.add(button);
+		panel.add(lblConexesAtuais);
 		
-		JLabel lblInformaes = new JLabel("Informa\u00E7\u00F5es:");
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblConexesAtuais))
-						.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
-							.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(table, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-							.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
-								.addGap(24)
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-									.addGroup(gl_panel.createSequentialGroup()
-										.addComponent(lblPorta)
-										.addGap(18)
-										.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-									.addComponent(lblInformaes)
-									.addComponent(lblIpAtual)
-									.addGroup(gl_panel.createSequentialGroup()
-										.addGap(48)
-										.addComponent(lblLblipatual, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)))
-								.addGap(18)
-								.addComponent(button, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE))
-							.addGroup(gl_panel.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(btnEncerrarConexo))))
-					.addContainerGap(112, Short.MAX_VALUE))
-		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(20)
-							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panel.createSequentialGroup()
-									.addGap(102)
-									.addComponent(lblConexesAtuais))
-								.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-									.addGroup(gl_panel.createSequentialGroup()
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-											.addComponent(lblIpAtual)
-											.addComponent(lblLblipatual))
-										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-											.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-											.addComponent(lblPorta)))
-									.addComponent(button, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)))
-							.addGap(1)
-							.addComponent(table, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnEncerrarConexo))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblInformaes)))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		panel.setLayout(gl_panel);
+		JLabel lblNmroMaxConexes = new JLabel("Max. Conex\u00F5es:");
+		lblNmroMaxConexes.setBounds(10, 87, 92, 14);
+		panel.add(lblNmroMaxConexes);
 		
+		textField_1 = new JTextField();
+		textField_1.setText("1");
+		textField_1.setBounds(120, 84, 64, 20);
+		panel.add(textField_1);
+		textField_1.setColumns(10);
+
 		JLabel lblLblinformacoes = new JLabel("lblInformacoes");
 		contentPane.add(lblLblinformacoes, BorderLayout.SOUTH);
 		lblLblinformacoes.setText("Habilite a conexão");
 		
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				if ( textField.getText().isEmpty() ){
+					JOptionPane.showMessageDialog(null, "Preencha a porta de conexão");
+					return;
+				}
+				
+				if ( textField_1.getText().isEmpty() ){
+					JOptionPane.showMessageDialog(null, "Preencha a quantidade máxima de conexões permitidas");
+					return;
+				}
+				
+				button.setText("Cancelar");
+				
+				NovaConexao conexao = new NovaConexao();
+				
+				Future<Socket> future = threadpool.submit(conexao);
+				
+			}
+		});
+		
 	}
+	
 }

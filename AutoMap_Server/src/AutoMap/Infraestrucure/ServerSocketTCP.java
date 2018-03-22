@@ -29,34 +29,24 @@ public class ServerSocketTCP {
 	private Socket cliente;
 	private ServerSocket servidor;
 
-
-	public ServerSocketTCP(int porta){
-		try {
+/*
+	public ServerSocketTCP(int porta) throws IOException{
 			abrirConexao(porta);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Erro ao abrir conexao Socket: " + e.getMessage());
-		}
 	}
-	
-	private void abrirConexao(int porta) throws IOException {
-		try {
-	      	// Instancia o ServerSocket ouvindo a porta
-	      	servidor = new ServerSocket(porta);
-	      	
-			// o método accept() bloqueia a execução até que
-			// o servidor receba um pedido de conexão
-			cliente = servidor.accept();
-			
-			hostConectado =  cliente.getInetAddress().getHostAddress();
-			
-			//Instacia os objetos de entrada e saída
-			entrada = new ObjectInputStream(cliente.getInputStream());
-			saida = new ObjectOutputStream(cliente.getOutputStream());
-			
-	    }   
-	    catch(Exception e) {
-	    	JOptionPane.showMessageDialog(null, "Erro ao abrir conexao Socket: " + e.getMessage());
-	    }
+*/	
+	public Socket abrirConexao(int porta) throws IOException {
+      	// Instancia o ServerSocket ouvindo a porta
+      	servidor = new ServerSocket(porta);
+		// o método accept() bloqueia a execução até que
+		// o servidor receba um pedido de conexão
+		//cliente = servidor.accept();
+      	return servidor.accept();
+		
+		//hostConectado =  cliente.getInetAddress().getHostAddress();
+		
+		//Instacia os objetos de entrada e saída
+		//entrada = new ObjectInputStream(cliente.getInputStream());
+		//saida = new ObjectOutputStream(cliente.getOutputStream());
 
 	}
 	
@@ -83,9 +73,12 @@ public class ServerSocketTCP {
 	}
 	
 	
+	
 	public boolean isConectado() {
 		return cliente.isConnected();
 	}
 	
+	public void limparConexao() throws IOException{
+	}
 	
 }

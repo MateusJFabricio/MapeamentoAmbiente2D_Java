@@ -5,11 +5,13 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 
-public class Main {
+import AutoMap.views.viewMain;
 
+public class Main {
+	public static viewMain telaPrincipal;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
+		/*
 		// create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
 
@@ -20,6 +22,10 @@ public class Main {
         pin.setShutdownOptions(true, PinState.LOW);
 
         System.out.println("--> GPIO state should be: ON");
+        */
+		
+		telaPrincipal = new viewMain();
+		telaPrincipal.show();
 
 	}
 
