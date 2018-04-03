@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import AutoMap.Domains.SocketManager;
 import AutoMap.Infraestrucure.ServerSocketTCP;
 
 import javax.swing.JMenuBar;
@@ -48,6 +49,7 @@ public class viewMain extends JFrame {
 	private JTextField textField_1;
 	private static final ExecutorService threadpool = Executors.newSingleThreadExecutor();
 	private Socket cliente;
+	SocketManager gerenteComunicacao;
 
 	/**
 	 * Create the frame.
@@ -105,8 +107,8 @@ public class viewMain extends JFrame {
 		JLabel lblIpAtual = new JLabel("Ip Atual:");
 		lblIpAtual.setBounds(46, 38, 64, 14);
 
-		JLabel lblPorta = new JLabel("Porta:");
-		lblPorta.setBounds(58, 63, 52, 14);
+		JLabel lblPorta = new JLabel("Porta padr\u00E3o:");
+		lblPorta.setBounds(24, 63, 86, 14);
 
 		textField = new JTextField();
 		textField.setText("1234");
@@ -151,23 +153,48 @@ public class viewMain extends JFrame {
 		
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if ( textField.getText().isEmpty() ){
-					JOptionPane.showMessageDialog(null, "Preencha a porta de conexão");
-					return;
+				if (button.getText() == "Encerrar servidor") {
+					if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja encerrar a conexão?", "Aiaiaii", JOptionPane.YES_NO_OPTION) != 0)
+						return;
+					button.setText("Iniciar Socket");
+					gerenteComunicacao.finalizarTodasConexoes();
+				}else{
+					if ( textField.getText().isEmpty() ){
+						JOptionPane.showMessageDialog(null, "Preencha a porta de conexão");
+						return;
+					}
+					
+					if ( textField_1.getText().isEmpty() ){
+						JOptionPane.showMessageDialog(null, "Preencha a quantidade máxima de conexões permitidas");
+						return;
+					}
+					
+					button.setText("Encerrar servidor");
+					
+					gerenteComunicacao = new SocketManager();
+					gerenteComunicacao.setMaxConexao(Integer.parseInt(textField_1.getText()));
+					gerenteComunicacao.setPortaPadrao(Integer.parseInt(textField.getText()));
+					try {
+						gerenteComunicacao.initConexoesSockets();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-				
-				if ( textField_1.getText().isEmpty() ){
-					JOptionPane.showMessageDialog(null, "Preencha a quantidade máxima de conexões permitidas");
+			}});
+		
+		btnEncerrarConexo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Exibe mensagem de aviso
+				if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja encerrar a conexão?", "Aiaiaii", JOptionPane.YES_NO_OPTION) != 0)
 					return;
-				}
 				
-				button.setText("Cancelar");
-				
-				NovaConexao conexao = new NovaConexao();
-				
-				Future<Socket> future = threadpool.submit(conexao);
-				
+//				Enviar mensagem de "Conexão encerrada pelo servidor"
+//				Finaliza a conexão do cliente
+//				if (cliente.alive)
+//					JOptionPane.showMessageDialog(null, "O cliente foi desconectado");
+//				
+					
 			}
 		});
 		

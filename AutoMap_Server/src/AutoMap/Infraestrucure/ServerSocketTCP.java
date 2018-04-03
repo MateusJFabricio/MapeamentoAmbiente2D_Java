@@ -1,75 +1,84 @@
 package AutoMap.Infraestrucure;
 
-import java.awt.Transparency;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.security.KeyStore.TrustedCertificateEntry;
-import java.sql.Date;
-import java.util.Enumeration;
-
-import javax.sql.rowset.spi.TransactionalWriter;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import com.pi4j.system.NetworkInterface;
-
+import java.util.Date;
 
 public class ServerSocketTCP {
-	public String nomeConexao;
+	public boolean clienteAdmin;
 	public int porta;
-	public String hostConectado;
-	private ObjectOutputStream saida;
-	private ObjectInputStream entrada;
+	public int portaLivre;
+	private ObjectOutputStream dataOutput;
+	private ObjectInputStream dataInput;
 	private Socket cliente;
 	private ServerSocket servidor;
-
-/*
-	public ServerSocketTCP(int porta) throws IOException{
-			abrirConexao(porta);
-	}
-*/	
+	public InformacoesSockets retorno;
+	public InformacoesSockets envio;
+	private Date hora = new Date();
+	private long timeLastKeepAlive = hora.getTime() ;
+	
 	public Socket abrirConexao(int porta) throws IOException {
-      	// Instancia o ServerSocket ouvindo a porta
+      	
       	servidor = new ServerSocket(porta);
-		// o método accept() bloqueia a execução até que
-		// o servidor receba um pedido de conexão
-		//cliente = servidor.accept();
       	return servidor.accept();
-		
-		//hostConectado =  cliente.getInetAddress().getHostAddress();
-		
-		//Instacia os objetos de entrada e saída
-		//entrada = new ObjectInputStream(cliente.getInputStream());
-		//saida = new ObjectOutputStream(cliente.getOutputStream());
+
+	}
+	
+	public Socket abrirConexaoComPortaLivre() throws IOException {
+      	porta = portaLivre;
+      	servidor = new ServerSocket(portaLivre);
+      	return servidor.accept();
 
 	}
 	
 	public void fecharConexaoSocket() throws IOException{
-		saida.close();
-		entrada.close();
+		dataOutput.writeChars("Conexão encerrada pelo servidor");
+		dataInput.close();
+		dataOutput.close();
 		cliente.close();  
 	}
 	
-	
-	public void enviarInformacoes(InformacoesSockets info) 
+	public void enviarNovaPorta(int porta) 
 	{
 		try {
-			saida.flush();
-			saida.writeObject(info);
+			dataOutput.flush();
+			dataOutput.writeInt(porta);
+		} catch (IOException e) {
+			System.out.println("Erro ao enviar tentar nova conexao Socket: " + e.getMessage());
+		}
+	}
+	
+	public void enviarKeepAlive(){
+		try {
+			dataOutput.flush();
+			dataOutput.writeChars("Keep Alive");
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar informações Socket: " + e.getMessage());
 		}
 	}
 	
-	public InformacoesSockets retornarInformacoes() throws ClassNotFoundException, IOException 
+	public void receberKeepAlive() throws IOException{
+		String mensagem = dataInput.readLine(); 
+		if ( mensagem == "Keep Alive")
+			timeLastKeepAlive = hora.getTime();
+	}
+	
+	public void enviarInformacoes() 
 	{
-			return (InformacoesSockets) entrada.readObject();		
+		try {
+			dataOutput.flush();
+			dataOutput.writeObject(this.envio);
+		} catch (IOException e) {
+			System.out.println("Erro ao enviar informações Socket: " + e.getMessage());
+		}
+	}
+	
+	public void retornarInformacoes() throws ClassNotFoundException, IOException 
+	{
+			this.retorno = (InformacoesSockets) dataInput.readObject();		
 	}
 	
 	
