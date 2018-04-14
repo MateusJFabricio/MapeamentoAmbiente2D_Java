@@ -174,6 +174,7 @@ public class viewMain extends JFrame {
 					gerenteComunicacao = new SocketManager();
 					gerenteComunicacao.setMaxConexao(Integer.parseInt(textField_1.getText()));
 					gerenteComunicacao.setPortaPadrao(Integer.parseInt(textField.getText()));
+					
 					try {
 						gerenteComunicacao.initConexoesSockets();
 					} catch (IOException e) {

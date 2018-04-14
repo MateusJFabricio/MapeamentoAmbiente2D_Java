@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import javax.swing.JOptionPane;
+
 import AutoMap.Infraestrucure.InformacoesSockets;
 import AutoMap.Infraestrucure.ServerSocketTCP;
 
@@ -67,16 +69,13 @@ public class SocketManager {
           
     }
     
-	public void aguardarNovaConexao() throws IOException{
-		
-		if (timerMonitorThread != null){
-			throw new IllegalArgumentException("aiaiaiaii");
-		}
-		
-		TimerTask tarefa = new TimerTask() {
+    private void iniciarTimerTask(){
+    	
+    	TimerTask tarefa = new TimerTask() {
 			private boolean threadIniciada = false;
 			private Future<ServerSocketTCP> future;
 			private int portaLivre = getPortaDisponivel();
+			
 			public void novo(){
 				try {
 					ThreadNovaConexao conexao = new ThreadNovaConexao();
@@ -95,6 +94,7 @@ public class SocketManager {
 				if (future.isDone()){
 					conexoesSockets.add(future.get());
 					setPortasUtilizadas(portaLivre);
+					JOptionPane.showMessageDialog(null, "Nova conexão estabelecida");
 				}
 				
 			}
@@ -119,6 +119,15 @@ public class SocketManager {
 		timerMonitorThread = new Timer();
 		timerMonitorThread.scheduleAtFixedRate(tarefa, 1000, 1000);
 		
+    }
+    
+	public void aguardarNovaConexao() throws IOException{
+		
+		if (timerMonitorThread != null){
+			throw new IllegalArgumentException("Monitor Thread esta nulo! =(");
+		}
+		
+		iniciarTimerTask();
 		
 	}
 	
