@@ -75,7 +75,7 @@ public class viewMain extends JFrame {
 		JLabel lblLblipatual = new JLabel("lblIpAtual");
 		lblLblipatual.setBounds(116, 38, 74, 14);
 		try {
-			lblLblipatual.setText(InetAddress.getLocalHost().getHostAddress());
+			lblLblipatual.setText("");
 		} catch (UnknownHostException e1) {
 			throw new IllegalAccessError(e1.getMessage());
 		}
