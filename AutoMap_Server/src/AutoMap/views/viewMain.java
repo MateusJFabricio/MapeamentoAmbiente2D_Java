@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
@@ -74,12 +72,7 @@ public class viewMain extends JFrame {
 
 		JLabel lblLblipatual = new JLabel("lblIpAtual");
 		lblLblipatual.setBounds(116, 38, 74, 14);
-		try {
-			lblLblipatual.setText("");
-		} catch (UnknownHostException e1) {
-			throw new IllegalAccessError(e1.getMessage());
-		}
-
+		lblLblipatual.setText(controller.getIpAtual());
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -91,6 +84,7 @@ public class viewMain extends JFrame {
 
 		final JButton btnIniciaSocket = new JButton("Iniciar Socket");
 		btnIniciaSocket.setBounds(194, 38, 147, 70);
+		btnIniciaSocket.setName("btnIniciaSocket");
 
 		JLabel lblIpAtual = new JLabel("Ip Atual:");
 		lblIpAtual.setBounds(46, 38, 64, 14);
@@ -111,6 +105,7 @@ public class viewMain extends JFrame {
 
 		JButton btnEncerrarConexao = new JButton("Encerrar Conex\u00E3o");
 		btnEncerrarConexao.setBounds(10, 270, 155, 23);
+		btnEncerrarConexao.setName("btnEncerrarConexao");
 
 		JLabel lblInformaes = new JLabel("Informa\u00E7\u00F5es");
 		lblInformaes.setBounds(24, 11, 105, 14);
@@ -183,16 +178,7 @@ public class viewMain extends JFrame {
 	}
 	
 	public void eventoCliquebtnEncerrarConexao(JButton button) {
-		
-		//Exibe mensagem de aviso
-		if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja encerrar a conexão?", "Aiaiaii", JOptionPane.YES_NO_OPTION) != 0)
-			return;
-		
-		//		Enviar mensagem de "Conexão encerrada pelo servidor"
-		//		Finaliza a conexão do cliente
-		//		if (cliente.alive)
-		//			JOptionPane.showMessageDialog(null, "O cliente foi desconectado");
-		//		
+		controller.encerrarConexao(String.valueOf(table.getValueAt(table.getSelectedRow(), 1)));	
 	
 	}
 	

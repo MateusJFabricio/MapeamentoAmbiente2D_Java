@@ -42,12 +42,24 @@ public class ControllerConexao {
 	}
 	
 	public void encerrarServidor(){
-		if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja encerrar a conexão?", "Confirma", JOptionPane.YES_NO_OPTION) != 0)
+		if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja encerrar o servidor?", "Confirma", JOptionPane.YES_NO_OPTION) != 0)
 			conexaoIniciada = false;
 		else
 		{
 			//gerenteComunicacao.finalizarTodasConexoes();
 			conexaoIniciada = true;
 		}
+	}
+	
+	public void encerrarConexao(String idConexao){
+		
+		if (JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja encerrar a conexão?", "Confirma", JOptionPane.YES_NO_OPTION) != 0)
+			return;
+		
+		//		Enviar mensagem de "Conexão encerrada pelo servidor"
+		//		Finaliza a conexão do cliente
+		//		if (cliente.alive)
+		//			JOptionPane.showMessageDialog(null, "O cliente foi desconectado");
+		//	
 	}
 }
