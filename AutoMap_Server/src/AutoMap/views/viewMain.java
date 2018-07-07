@@ -28,42 +28,17 @@ public class viewMain extends JFrame {
 	private JPanel contentPane;
 	private JTextField edtPortaPadrao;
 	private JTable table;
-	ServerSocketTCP conexao;
 	private JTextField edtMaxConexao;
-	private Socket cliente;
-	SocketManager gerenteComunicacao;
+	
 	public ControllerConexao controller;
-
-	// classe que implementa a interface Callable e retorna um numero aleatorio
-    class NovaConexao implements Callable<Socket> {
-
-          public Socket call() {
-
-      			try {
-      				conexao = new ServerSocketTCP();
-      				cliente = conexao.abrirConexao(12345);
-      				
-      			} catch (Exception e) {
-      				JOptionPane.showMessageDialog(null, "Conexão mal sucedida: " + e.getMessage());
-      			}
-				return cliente;
-          }
-          
-    }
     
 	public viewMain(final ControllerConexao __controller) {
-		
 		controller = __controller;
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				try {
-					conexao.fecharConexaoSocket();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				controller.encerrarServidor();
 			}
 		});
 		
@@ -170,7 +145,7 @@ public class viewMain extends JFrame {
 		}
 		else
 		{
-			controller.novaConexao(edtPortaPadrao.getText(), edtMaxConexao.getText());
+			controller.habilitarServidor(edtPortaPadrao.getText(), edtMaxConexao.getText());
 			
 			if (controller.conexaoIniciada)
 				__btnIniciaSocket.setText("Encerrar servidor");

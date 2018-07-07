@@ -1,12 +1,16 @@
 package AutoMap.Controller;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
+import AutoMap.Domains.SocketManager;
+
 public class ControllerConexao {
 	public boolean conexaoIniciada = false;
+	SocketManager gerenteComunicacao;
 	
 	public String getIpAtual() {
 		String ipAtual;
@@ -18,14 +22,14 @@ public class ControllerConexao {
 		return ipAtual;
 	}
 
-	public void novaConexao(String portaPadrao, String maxConexao){
+	public void habilitarServidor(String portaPadrao, String maxConexao){
 		if (portaPadrao.isEmpty())
 			throw new IllegalArgumentException("Preencha a porta de conexão");
 		
 		if (maxConexao.isEmpty())
 			throw new IllegalArgumentException("Preencha a quantidade máxima de conexões permitidas");
 		
-		/*
+		
 		gerenteComunicacao = new SocketManager();
 		gerenteComunicacao.setMaxConexao(Integer.parseInt(maxConexao));
 		gerenteComunicacao.setPortaPadrao(Integer.parseInt(portaPadrao));
@@ -36,7 +40,7 @@ public class ControllerConexao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		
 		conexaoIniciada = true;
 		
 	}
@@ -46,6 +50,7 @@ public class ControllerConexao {
 			conexaoIniciada = false;
 		else
 		{
+			//gerenteComunicacao.encerrarMonitorComunicacao();
 			//gerenteComunicacao.finalizarTodasConexoes();
 			conexaoIniciada = true;
 		}

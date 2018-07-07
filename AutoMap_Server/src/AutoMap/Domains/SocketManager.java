@@ -9,11 +9,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 import javax.swing.JOptionPane;
 
-import AutoMap.Infraestrucure.InformacoesSockets;
 import AutoMap.Infraestrucure.ServerSocketTCP;
 
 public class SocketManager {
@@ -21,15 +19,9 @@ public class SocketManager {
 	private int maxConexao;
 	private ArrayList<String> portasUtilizadas;
 	private ArrayList<ServerSocketTCP> conexoesSockets;
-	private ArrayList<InformacoesSockets> inforEntrada;
 	private Timer timerMonitorComm;
 	private Timer timerMonitorThread;
-	private static int qntConexoes = 0;
 	private static final ExecutorService threadpool = Executors.newFixedThreadPool(3);
-	
-	public SocketManager(){
-		iniciarMonitorComunicacao();
-	}
 	
 	public void initConexoesSockets() throws IOException{
 		setMaxConexao(getMaxConexao());
@@ -52,7 +44,7 @@ public class SocketManager {
 		
 	}
 	
-	// classe que implementa a interface Callable e retorna um numero aleatorio
+	// classe que implementa a interface Callable e retorna uma nova conexao
     private static class ThreadNovaConexao implements Callable<ServerSocketTCP> {
     	public int portaPadrao;
     	public int portaLivre;
@@ -121,52 +113,9 @@ public class SocketManager {
 		
     }
     
-	public void aguardarNovaConexao() throws IOException{
-		
-		if (timerMonitorThread != null){
-			throw new IllegalArgumentException("Monitor Thread esta nulo! =(");
-		}
-		
+	public void aguardarNovaConexao() throws IOException{		
 		iniciarTimerTask();
 		
-	}
-	
-	private void verificarConexaoThread(){
-		
-	}
-	
-	private void iniciarMonitorComunicacao() {
-		// Define o monitor de tarefas
-		if (timerMonitorComm != null){
-			throw new IllegalArgumentException("Já há um monitor de comunicação ativo");
-		}
-		
-		TimerTask tarefa = new TimerTask() {
-			public void run() {
-				try {
-					//Condição de parada do monitor
-					if (qntConexoes <= 0){
-						this.cancel();
-					}
-					//Tarefa a ser executada
-					//Enviar os dados
-					for (ServerSocketTCP conexao: conexoesSockets) {
-						conexao.enviarKeepAlive();
-					}
-					
-					//Receber os dados
-					for (ServerSocketTCP conexao: conexoesSockets) {
-						conexao.receberKeepAlive();
-					}
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		
-		timerMonitorComm = new Timer();
-		timerMonitorComm.scheduleAtFixedRate(tarefa, 1000, 1000);
 	}
 	
 
